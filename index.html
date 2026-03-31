@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aromic Agarbatti</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin:0;
+      font-family:sans-serif;
+      background:#0d0d0d;
+      color:white;
+    }
+
+    .header {
+      text-align:center;
+      padding:15px;
+      font-size:22px;
+      font-weight:bold;
+      background:#111;
+    }
+
+    .banner {
+      background:linear-gradient(to right, #ff9800, #ff5722);
+      padding:20px;
+      text-align:center;
+      border-radius:10px;
+      margin:10px;
+      font-size:18px;
+    }
+
+    .card {
+      background:#1a1a1a;
+      margin:12px;
+      padding:12px;
+      border-radius:15px;
+      box-shadow:0 0 10px rgba(0,0,0,0.5);
+    }
+
+    img {
+      width:100%;
+      border-radius:10px;
+    }
+
+    h3 { margin:5px 0; }
+
+    button {
+      padding:10px;
+      width:100%;
+      margin-top:8px;
+      background:#25D366;
+      color:white;
+      border:none;
+      border-radius:8px;
+      font-size:14px;
+    }
+
+    .nav {
+      position:fixed;
+      bottom:0;
+      width:100%;
+      display:flex;
+      justify-content:space-around;
+      background:#111;
+      padding:10px;
+    }
+
+    .nav button {
+      background:none;
+      color:white;
+      font-size:18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">🌿 Aromic Agarbatti</div>
+
+<div id="app"></div>
+
+<div class="nav">
+  <button onclick="showPage('home')">🏠</button>
+  <button onclick="showPage('cart')">🛒</button>
+  <button onclick="showPage('orders')">📦</button>
+</div>
+
+<script>
+
+let page = "home";
+let cart = [];
+let orders = [];
+
+const products = [
+  {name:"Rose Bliss", price:180, desc:"Soft floral fragrance", img:"https://images.unsplash.com/photo-1603006905003-be475563bc59"},
+  {name:"Sandalwood", price:200, desc:"Temple classic aroma", img:"https://images.unsplash.com/photo-1596464716127-f2a82984de30"},
+  {name:"Lavender Calm", price:190, desc:"Relaxing scent", img:"https://images.unsplash.com/photo-1604335399105-a0c585fd81a1"}
+];
+
+function showPage(p){
+  page = p;
+  render();
+}
+
+function addToCart(i){
+  cart.push(products[i]);
+  alert("Added to cart");
+}
+
+function placeOrder(){
+  let total = cart.reduce((a,b)=>a+b.price,0);
+
+  let msg = "🛍️ Aromic Order%0A";
+  cart.forEach(c=>{
+    msg += c.name + " - ₹" + c.price + "%0A";
+  });
+  msg += "%0ATotal: ₹" + total;
+
+  window.open("https://wa.me/919131788345?text="+msg);
+
+  orders.unshift({id:Date.now(), total});
+  cart = [];
+  showPage("orders");
+}
+
+function render(){
+
+  let html = "";
+
+  if(page==="home"){
+    html += `<div class="banner">Premium Agarbatti | Free Local Delivery</div>`;
+
+    products.forEach((p,i)=>{
+      html += `
+      <div class="card">
+        <img src="${p.img}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <p><b>₹${p.price}</b></p>
+        <button onclick="addToCart(${i})">Add to Cart</button>
+      </div>`;
+    });
+  }
+
+  if(page==="cart"){
+    let total = cart.reduce((a,b)=>a+b.price,0);
+
+    html += "<h2 style='padding:10px'>🛒 Your Cart</h2>";
+
+    if(cart.length===0){
+      html += "<p style='padding:10px'>Cart is empty</p>";
+    } else {
+      cart.forEach(c=>{
+        html += `<p style='padding:10px'>${c.name} - ₹${c.price}</p>`;
+      });
+
+      html += `<h3 style='padding:10px'>Total: ₹${total}</h3>`;
+      html += `<button onclick="placeOrder()">Order on WhatsApp</button>`;
+    }
+  }
+
+  if(page==="orders"){
+    html += "<h2 style='padding:10px'>📦 Orders</h2>";
+
+    if(orders.length===0){
+      html += "<p style='padding:10px'>No orders yet</p>";
+    } else {
+      orders.forEach(o=>{
+        html += `<div class='card'>
+          <p>Order #${o.id}</p>
+          <p>Total: ₹${o.total}</p>
+          <p>Status: Pending</p>
+        </div>`;
+      });
+    }
+  }
+
+  document.getElementById("app").innerHTML = html;
+}
+
+render();
+
+</script>
+
+</body>
+</html>
